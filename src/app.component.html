@@ -1,0 +1,176 @@
+<main class="min-h-screen p-4 sm:p-6 lg:p-8">
+  <div class="mx-auto max-w-7xl">
+    <header class="mb-8 text-center">
+      <h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-gray-900">Shape Shifter</h1>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <!-- Controls Panel -->
+      <aside class="lg:col-span-3">
+        <div class="bg-slate-100 rounded-2xl p-6 shadow-lg sticky top-8 border border-slate-200">
+          <h2 class="text-xl font-semibold mb-6 border-b border-slate-300 pb-4 text-gray-800">Controls</h2>
+          
+          <div class="space-y-6">
+            <!-- Color Palette -->
+            <div>
+              <label class="block text-sm font-medium text-slate-600 mb-2">Color Palette</label>
+              <div class="grid grid-cols-5 gap-2">
+                @for (color of colors(); track $index) {
+                  <div class="relative w-full h-12">
+                    <input 
+                      type="color" 
+                      [value]="color" 
+                      (change)="updateColor($index, $event)"
+                      class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      [attr.aria-label]="'Color ' + ($index + 1)"
+                    >
+                    <div 
+                      class="w-full h-full rounded-lg border-2 border-slate-300 pointer-events-none" 
+                      [style.backgroundColor]="color">
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- White Space -->
+            <div>
+              <label for="whitespace" class="block text-sm font-medium text-slate-600">White Space</label>
+              <span class="text-xs text-slate-500">Controls how many tiles become white.</span>
+              <div class="flex items-center gap-4 mt-2">
+                <input 
+                  id="whitespace" 
+                  type="range" 
+                  min="0" max="90" 
+                  [value]="whiteSpace()"
+                  (input)="updateWhiteSpace($event)"
+                  class="w-full h-2 bg-slate-300 rounded-lg appearance-none cursor-pointer"
+                >
+                <span class="font-mono text-sm w-12 text-center text-slate-700">{{ whiteSpace() }}%</span>
+              </div>
+            </div>
+            
+            <!-- Min Shape Size -->
+            <div>
+              <label for="min-size" class="block text-sm font-medium text-slate-600">Min Shape Size</label>
+              <div class="flex items-center gap-4 mt-2">
+                <input 
+                  id="min-size" 
+                  type="range" 
+                  min="10" 
+                  [max]="maxShapeSize()" 
+                  [value]="minShapeSize()"
+                  (input)="updateMinShapeSize($event)"
+                  class="w-full h-2 bg-slate-300 rounded-lg appearance-none cursor-pointer"
+                >
+                <span class="font-mono text-sm w-12 text-center text-slate-700">{{ minShapeSize() }}px</span>
+              </div>
+            </div>
+
+            <!-- Max Shape Size -->
+            <div>
+              <label for="max-size" class="block text-sm font-medium text-slate-600">Max Shape Size</label>
+              <div class="flex items-center gap-4 mt-2">
+                <input 
+                  id="max-size" 
+                  type="range" 
+                  [min]="minShapeSize()" 
+                  max="400" 
+                  [value]="maxShapeSize()"
+                  (input)="updateMaxShapeSize($event)"
+                  class="w-full h-2 bg-slate-300 rounded-lg appearance-none cursor-pointer"
+                >
+                <span class="font-mono text-sm w-12 text-center text-slate-700">{{ maxShapeSize() }}px</span>
+              </div>
+            </div>
+            
+            <!-- Scale -->
+            <div>
+                <label for="scale" class="block text-sm font-medium text-slate-600">Scale</label>
+                <div class="flex items-center gap-4 mt-2">
+                    <input 
+                      id="scale" 
+                      type="range" 
+                      min="0.5" 
+                      max="2" 
+                      step="0.05"
+                      [value]="scale()"
+                      (input)="updateScale($event)"
+                      class="w-full h-2 bg-slate-300 rounded-lg appearance-none cursor-pointer"
+                    >
+                    <span class="font-mono text-sm w-12 text-center text-slate-700">{{ scale().toFixed(2) }}x</span>
+                </div>
+            </div>
+            
+            <!-- Rotation -->
+            <div>
+                <label for="rotation" class="block text-sm font-medium text-slate-600">Rotation</label>
+                <div class="flex items-center gap-4 mt-2">
+                    <input 
+                      id="rotation" 
+                      type="range" 
+                      min="-180" 
+                      max="180" 
+                      [value]="rotation()"
+                      (input)="updateRotation($event)"
+                      class="w-full h-2 bg-slate-300 rounded-lg appearance-none cursor-pointer"
+                    >
+                    <span class="font-mono text-sm w-12 text-center text-slate-700">{{ rotation() }}°</span>
+                </div>
+            </div>
+
+            <!-- Shape Type -->
+            <div>
+              <label for="shape" class="block text-sm font-medium text-slate-600 mb-2">Shape</label>
+              <select 
+                id="shape" 
+                (change)="updateShapeType($event)"
+                [value]="shapeType()"
+                class="block w-full bg-white border border-slate-300 rounded-md py-2 px-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="square">Rectangle</option>
+                <option value="circle">Circle</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Generate Button -->
+          <div class="mt-8 pt-6 border-t border-slate-300">
+            <button 
+              (click)="regenerateLayout()"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V4a1 1 0 011-1zm10 8a1 1 0 011-1h5a1 1 0 011 1v5a1 1 0 01-1 1h-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 111.885-.666A5.002 5.002 0 0014.001 13H11a1 1 0 01-1-1v-2z" clip-rule="evenodd" />
+              </svg>
+              <span>Regenerate Layout</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Canvas -->
+      <div class="lg:col-span-9 min-h-[60vh] lg:min-h-0 bg-slate-200 rounded-2xl relative overflow-hidden shadow-inner" #canvas>
+        <div 
+          class="w-full h-full" 
+          [style.transform]="'rotate(' + rotation() + 'deg) scale(' + scale() + ')'"
+          style="transform-origin: center; transition: transform 0.2s ease-out;"
+          >
+          @for (shape of generatedShapes(); track shape.id) {
+            <div 
+              class="absolute"
+              [class.rounded-full]="shape.type === 'circle'"
+              [style.width.px]="shape.width"
+              [style.height.px]="shape.height"
+              [style.backgroundColor]="shape.color"
+              [style.transform]="'translate(' + shape.x + 'px, ' + shape.y + 'px)'"
+              [style.outline]="'1px solid ' + shape.color"
+              [style.outline-offset]="'-1px'"
+              >
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

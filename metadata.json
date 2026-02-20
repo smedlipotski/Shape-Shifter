@@ -1,0 +1,5 @@
+{
+  "name": "Generative Art Creator",
+  "description": "Create beautiful, random geometric art by selecting a color palette, shape, and density. A simple tool for generating unique visual patterns.",
+  "requestFramePermissions": []
+}
